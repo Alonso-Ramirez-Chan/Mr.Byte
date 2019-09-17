@@ -2,10 +2,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class plMovement : Photon.MonoBehaviour
+//Photon.MonoBehaviour
+public class plMovement : MonoBehaviour
 {
-    public bool devTesting = false; //Se usa cuando se testea
+    private float jumpForce = 500f;
+    private Rigidbody2D rb;
+
+    public Text score;
+    private int puntaje = 0;
+
+    private HttpRequests requests;
+
+    private void Start()
+    {
+        rb = gameObject.GetComponent<Rigidbody2D>();
+        requests = new HttpRequests();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.AddForce(new Vector2(0f, jumpForce));
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            StartCoroutine(HttpRequests.PostScore("http://127.0.0.1:5000/HighScore"+"?score="+score.text+"&player=unity"));
+        }
+    }
+
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.tag == "Puntaje")
+        {
+            puntaje++;
+            score.text = puntaje.ToString();
+        }
+    }
+
+
+
+
+    /*public bool devTesting = false; //Se usa cuando se testea
 
     public PhotonView photonView;
 
@@ -81,5 +121,5 @@ public class plMovement : Photon.MonoBehaviour
             //si no es nuestro player, recibe data, o sea está leyendo(stream.isReading)
             selfPosition = (Vector3)stream.ReceiveNext();
         }
-    }
+    }*/
 }
