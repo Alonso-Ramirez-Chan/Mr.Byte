@@ -3,35 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 //Photon.MonoBehaviour
-public class plMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-    private float jumpForce = 500f;
-    private Rigidbody2D rb;
+    //#####################  Movimiento  #####################//
+    public CharacterController2D controller;
 
+    private float runSpeed = 40f;
+    private float horizontalMove = 0f;
+    private bool jump;
+    //#######################################################//
+
+    //#####################  HTTPRequest  #####################//
     public Text score;
     private int puntaje = 0;
-
     private HttpRequests requests;
+    //########################################################//
 
     private void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody2D>();
         requests = new HttpRequests();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            rb.AddForce(new Vector2(0f, jumpForce));
+            jump = true;
         }
 
+        //Enviar Datos al server
         if (Input.GetKeyDown(KeyCode.Q))
         {
             StartCoroutine(HttpRequests.PostScore("http://127.0.0.1:5000/HighScore"+"?score="+score.text+"&player=unity"));
         }
     }
 
+    private void FixedUpdate()
+    {
+        controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
+        jump = false;
+    }
 
     void OnCollisionEnter2D(Collision2D col)
     {
