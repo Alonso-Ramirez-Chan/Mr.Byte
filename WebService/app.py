@@ -69,8 +69,11 @@ def HighScore():
 
 
 #pip install -r requirements.txt -r requirements.dev.txt
-
-
+#python -m pip install --upgrade pip
+#pip install pyrebase4
+#pip install flask
+#set FLASK_APP=app.py
+#flask run
 
 
 """
